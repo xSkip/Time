@@ -16,7 +16,7 @@ Jeder Schritt endet mit etwas, das sich ausprobieren oder prüfen lässt. Erledi
   Blöcke speichern und laden, neuer Tag ab Mitternacht, Umgang mit einem vom Vortag noch laufenden Block.
   *Ergebnis: Daten überleben ein Neuladen.*
 
-- [ ] **4. Hauptbildschirm**
+- [x] **4. Hauptbildschirm**
   Große Anzeige „noch offen“ und Ende-Uhrzeit, Knöpfe „Arbeit starten“ / „Pause“ / „Unterwegs“, Liste der heutigen Einträge, Aktualisierung jede Minute. Für Einhandbedienung am iPhone.
   *Ergebnis: im Browser benutzbar.*
 

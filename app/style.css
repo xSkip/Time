@@ -1,0 +1,148 @@
+:root {
+  --bg: #f4f1ea;
+  --flaeche: #ffffff;
+  --text: #1d1f23;
+  --leise: #6b6f76;
+  --linie: #e2ddd2;
+  --arbeit: #2f6f5e;
+  --arbeit-text: #ffffff;
+  --pause: #c9822b;
+  --unterwegs: #5a6ea8;
+  --plus: #2f6f5e;
+  --gefahr: #b23b3b;
+  --radius: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181c;
+    --flaeche: #22252b;
+    --text: #eceae4;
+    --leise: #9a9ea6;
+    --linie: #33373f;
+    --arbeit: #4fa88e;
+    --arbeit-text: #0f1a16;
+    --pause: #e0a050;
+    --unterwegs: #8a9ce0;
+    --plus: #6cc4a8;
+    --gefahr: #e07070;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 17px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top) + 24px) 16px calc(env(safe-area-inset-bottom) + 24px);
+}
+
+/* Anzeige */
+
+.anzeige { text-align: center; padding: 16px 0 24px; }
+.anzeige p { margin: 0; }
+
+.status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--flaeche);
+  color: var(--leise);
+  font-size: 15px;
+}
+.status.arbeit { color: var(--arbeit); }
+.status.pause { color: var(--pause); }
+.status.unterwegs { color: var(--unterwegs); }
+
+.gross {
+  margin-top: 16px !important;
+  font-size: 88px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+}
+.gross.plus { color: var(--plus); }
+
+.beschriftung { color: var(--leise); font-size: 18px; margin-top: 4px !important; }
+.ende { margin-top: 16px !important; font-size: 20px; min-height: 1.4em; }
+.ende small { display: block; color: var(--leise); font-size: 14px; }
+
+/* Knöpfe */
+
+.knoepfe { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+
+button {
+  font: inherit;
+  border: 0;
+  border-radius: var(--radius);
+  padding: 18px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--flaeche);
+  color: var(--text);
+  touch-action: manipulation;
+}
+button:active { transform: scale(0.98); }
+
+.knoepfe .haupt { grid-column: 1 / -1; padding: 24px; font-size: 22px; background: var(--arbeit); color: var(--arbeit-text); }
+.knoepfe .pause { color: var(--pause); }
+.knoepfe .unterwegs { color: var(--unterwegs); }
+.knoepfe .feierabend { grid-column: 1 / -1; color: var(--leise); font-weight: 500; }
+
+/* Summen */
+
+.summen {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 24px 0;
+  text-align: center;
+}
+.summen div { background: var(--flaeche); border-radius: var(--radius); padding: 12px 4px; }
+.summen span { display: block; font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.summen small { color: var(--leise); font-size: 13px; }
+
+/* Liste */
+
+.heute h2 { font-size: 15px; color: var(--leise); font-weight: 600; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+ol { list-style: none; margin: 0; padding: 0; background: var(--flaeche); border-radius: var(--radius); overflow: hidden; }
+ol:empty { display: none; }
+
+.eintrag {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 0;
+  background: none;
+  text-align: left;
+  font-weight: 400;
+  border-bottom: 1px solid var(--linie);
+}
+li:last-child .eintrag { border-bottom: 0; }
+.eintrag:active { transform: none; background: var(--linie); }
+
+.punkt { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.punkt.arbeit { background: var(--arbeit); }
+.punkt.pause { background: var(--pause); }
+.punkt.unterwegs { background: var(--unterwegs); }
+
+.eintrag .art { flex: 1; }
+.eintrag .zeit { color: var(--leise); font-variant-numeric: tabular-nums; }
+.eintrag .dauer { font-variant-numeric: tabular-nums; min-width: 3.2em; text-align: right; }
+
+.leer { color: var(--leise); text-align: center; }
+.leer[hidden] { display: none; }
