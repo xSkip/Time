@@ -20,6 +20,7 @@ Nur ich (eine Person, keine Benutzerverwaltung, kein Login).
 - **Arbeitszeit:** Büro und Home Office zählen gleich.
 - **Keine Arbeitszeit:** Mittagspause, Fitnessstudio, Wegzeit (z. B. Heimfahrt) und alles andere.
 - **Gesetzliche Pause:** Sobald die Arbeitszeit des Tages 6 h überschreitet, müssen mindestens 30 min Pause angefallen sein. Ist die Summe der Pausen kleiner als 30 min, wird die Differenz von der Arbeitszeit abgezogen.
+  Der Abzug wird nie größer als die Zeit über 6 h. Beispiel ohne Pause: Bei 6:10 h Arbeit zählen 6:00 h, ab 6:30 h Arbeit werden die vollen 30 min abgezogen. So springt die Anzeige bei 6 h nicht plötzlich um 30 min zurück.
 - **Was als Pause zählt:** Jede Unterbrechung, die der Erholung dient (Mittagspause, Fitnessstudio, …). **Wegzeit zählt nicht als Pause**, weil sie nicht der Erholung dient. Sie ist weder Arbeitszeit noch Pause.
 
 ### Beispiel

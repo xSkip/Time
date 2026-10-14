@@ -8,7 +8,7 @@ Jeder Schritt endet mit etwas, das sich ausprobieren oder prüfen lässt. Erledi
   Ordner und leere Dateien, Node.js installieren, ein erster Test läuft.
   *Ergebnis: Grundgerüst im Repo.*
 
-- [ ] **2. Berechnungslogik mit Tests**
+- [x] **2. Berechnungslogik mit Tests**
   Arbeitszeit, Pausenregel (30 min nach 6 h, Wegzeit zählt nicht als Pause), noch offen / Plus, voraussichtliches Ende inklusive noch fälliger Pausendifferenz. Das Beispiel aus den Anforderungen wird ein Testfall, dazu Grenzfälle (genau 6 h, nur 15 min Pause, laufender Block, …).
   *Ergebnis: Rechnung nachweislich korrekt, noch ohne Bildschirm.*
 
