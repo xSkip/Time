@@ -70,5 +70,6 @@ export function pruefe(block, jetzt) {
   if (!Number.isFinite(block.start)) return 'Beginn fehlt.';
   if (block.ende != null && block.ende < block.start) return 'Ende liegt vor dem Beginn.';
   if (block.start > jetzt) return 'Beginn liegt in der Zukunft.';
+  if (block.ende != null && block.ende > jetzt) return 'Ende liegt in der Zukunft.';
   return null;
 }

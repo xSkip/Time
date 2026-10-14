@@ -70,7 +70,8 @@ test('pruefe erkennt ungültige Blöcke', () => {
   const jetzt = um(14, 12, 0);
   assert.equal(pruefe({ typ: 'arbeit', start: um(14, 8, 0), ende: um(14, 9, 0) }, jetzt), null);
   assert.match(pruefe({ typ: 'arbeit', start: um(14, 9, 0), ende: um(14, 8, 0) }, jetzt), /vor dem Beginn/);
-  assert.match(pruefe({ typ: 'arbeit', start: um(14, 13, 0) }, jetzt), /Zukunft/);
+  assert.match(pruefe({ typ: 'arbeit', start: um(14, 13, 0) }, jetzt), /Beginn liegt in der Zukunft/);
+  assert.match(pruefe({ typ: 'arbeit', start: um(14, 11, 0), ende: um(14, 13, 0) }, jetzt), /Ende liegt in der Zukunft/);
   assert.match(pruefe({ typ: 'kaffee', start: um(14, 8, 0) }, jetzt), /Art/);
 });
 

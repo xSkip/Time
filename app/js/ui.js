@@ -1,7 +1,9 @@
 import { berechne } from './rechner.js';
-import { wechsle, laufender, bloeckeVonTag, schliesseAlte } from './bloecke.js';
+import {
+  wechsle, laufender, bloeckeVonTag, schliesseAlte, aendere, loesche, fuegeHinzu, pruefe, tagesbeginn,
+} from './bloecke.js';
 import { erstelleSpeicher } from './speicher.js';
-import { dauer, uhrzeit, NAMEN } from './format.js';
+import { dauer, uhrzeit, zeitAmTag, NAMEN } from './format.js';
 
 const speicher = erstelleSpeicher();
 let alle = speicher.lade();
@@ -23,7 +25,7 @@ function knopf(text, klasse, typ) {
   return b;
 }
 
-function zeichneKnoepfe(aktiv) {
+function zeichneKnoepfe(aktiv, schonGearbeitet) {
   const box = $('knoepfe');
   box.replaceChildren();
   if (aktiv?.typ === 'arbeit') {
@@ -33,7 +35,7 @@ function zeichneKnoepfe(aktiv) {
       knopf('Feierabend', 'feierabend', null),
     );
   } else {
-    box.append(knopf(aktiv ? 'Weiterarbeiten' : 'Arbeit starten', 'haupt', 'arbeit'));
+    box.append(knopf(aktiv || schonGearbeitet ? 'Weiterarbeiten' : 'Arbeit starten', 'haupt', 'arbeit'));
     if (aktiv?.typ === 'pause') box.append(knopf('Unterwegs', 'unterwegs', 'unterwegs'));
     if (aktiv?.typ === 'unterwegs') box.append(knopf('Pause', 'pause', 'pause'));
     if (aktiv) box.append(knopf('Feierabend', 'feierabend', null));
@@ -48,7 +50,7 @@ function zeichneAnzeige(r, aktiv) {
   status.className = `status ${aktiv?.typ ?? ''}`;
   status.textContent = aktiv
     ? `${NAMEN[aktiv.typ]} seit ${uhrzeit(aktiv.start)}`
-    : (r.brutto > 0 ? 'Feierabend' : 'Noch nicht gestartet');
+    : r.brutto === 0 ? 'Noch nicht gestartet' : r.offen > 0 ? 'Gerade nicht aktiv' : 'Feierabend';
 
   const gross = $('gross');
   if (r.offen > 0) {
@@ -126,9 +128,74 @@ function zeichne() {
   const aktiv = laufender(heute);
   const r = berechne(heute, jetzt);
   zeichneAnzeige(r, aktiv);
-  zeichneKnoepfe(aktiv);
+  zeichneKnoepfe(aktiv, r.brutto > 0);
   zeichneListe(heute, jetzt);
 }
+
+// Bearbeiten
+
+const dialog = $('dialog');
+const formular = $('formular');
+let bearbeitet = null; // Block, der gerade bearbeitet wird; null = neuer Eintrag
+
+function oeffne(block) {
+  bearbeitet = block;
+  const jetzt = Date.now();
+  const heute = bloeckeVonTag(alle, jetzt);
+  const letzterEnde = heute.at(-1)?.ende;
+  const vorlage = block ?? {
+    typ: 'arbeit',
+    start: letzterEnde ?? jetzt - 60 * 60000,
+    ende: jetzt,
+  };
+  $('dialog-titel').textContent = block ? 'Eintrag bearbeiten' : 'Eintrag nachtragen';
+  formular.typ.value = vorlage.typ;
+  formular.start.value = uhrzeit(vorlage.start);
+  formular.ende.value = vorlage.ende ? uhrzeit(vorlage.ende) : '';
+  $('loeschen').hidden = !block;
+  $('fehler').textContent = '';
+  dialog.showModal();
+}
+
+function speichereFormular() {
+  const jetzt = Date.now();
+  const tag = bearbeitet ? tagesbeginn(bearbeitet.start) : tagesbeginn(jetzt);
+  const block = {
+    typ: formular.typ.value,
+    start: zeitAmTag(tag, formular.start.value),
+    ende: formular.ende.value ? zeitAmTag(tag, formular.ende.value) : undefined,
+  };
+
+  let fehler = pruefe(block, jetzt);
+  if (!fehler && block.ende == null) {
+    const aktiv = laufender(alle);
+    if (aktiv && aktiv.id !== bearbeitet?.id) fehler = 'Es läuft bereits ein anderer Eintrag. Bitte ein Ende angeben.';
+  }
+  if (fehler) {
+    $('fehler').textContent = fehler;
+    return;
+  }
+
+  speichere(bearbeitet ? aendere(alle, bearbeitet.id, block) : fuegeHinzu(alle, block));
+  dialog.close();
+}
+
+$('liste').addEventListener('click', (e) => {
+  const zeile = e.target.closest('.eintrag');
+  if (zeile) oeffne(alle.find((b) => b.id === zeile.dataset.id));
+});
+$('hinzufuegen').addEventListener('click', () => oeffne(null));
+$('abbrechen').addEventListener('click', () => dialog.close());
+$('loeschen').addEventListener('click', () => {
+  if (bearbeitet && confirm('Diesen Eintrag löschen?')) {
+    speichere(loesche(alle, bearbeitet.id));
+    dialog.close();
+  }
+});
+formular.addEventListener('submit', (e) => {
+  e.preventDefault();
+  speichereFormular();
+});
 
 zeichne();
 setInterval(zeichne, 15000);

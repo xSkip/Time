@@ -29,8 +29,35 @@
       <h2>Heute</h2>
       <ol id="liste"></ol>
       <p class="leer" id="leer">Noch keine Einträge.</p>
+      <button type="button" class="hinzufuegen" id="hinzufuegen">+ Eintrag nachtragen</button>
     </section>
   </main>
+
+  <dialog id="dialog">
+    <form method="dialog" id="formular">
+      <h2 id="dialog-titel">Eintrag bearbeiten</h2>
+
+      <fieldset class="arten">
+        <legend>Art</legend>
+        <label><input type="radio" name="typ" value="arbeit"><span>Arbeit</span></label>
+        <label><input type="radio" name="typ" value="pause"><span>Pause</span></label>
+        <label><input type="radio" name="typ" value="unterwegs"><span>Unterwegs</span></label>
+      </fieldset>
+
+      <div class="zeiten">
+        <label>Beginn <input type="time" name="start" required></label>
+        <label>Ende <input type="time" name="ende"></label>
+      </div>
+      <p class="hinweis">Ende leer lassen, wenn der Eintrag noch läuft.</p>
+      <p class="fehler" id="fehler" role="alert"></p>
+
+      <div class="aktionen">
+        <button type="button" class="loeschen" id="loeschen">Löschen</button>
+        <button type="button" id="abbrechen">Abbrechen</button>
+        <button type="submit" class="speichern" value="speichern">Speichern</button>
+      </div>
+    </form>
+  </dialog>
 
   <script type="module" src="js/ui.js"></script>
 </body>

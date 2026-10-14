@@ -20,7 +20,7 @@ Jeder Schritt endet mit etwas, das sich ausprobieren oder prüfen lässt. Erledi
   Große Anzeige „noch offen“ und Ende-Uhrzeit, Knöpfe „Arbeit starten“ / „Pause“ / „Unterwegs“, Liste der heutigen Einträge, Aktualisierung jede Minute. Für Einhandbedienung am iPhone.
   *Ergebnis: im Browser benutzbar.*
 
-- [ ] **5. Einträge bearbeiten**
+- [x] **5. Einträge bearbeiten**
   Zeiten ändern, Typ ändern (Pause ↔ Unterwegs), Einträge hinzufügen und löschen.
   *Ergebnis: Fehler sind korrigierbar.*
 
