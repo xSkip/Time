@@ -4,7 +4,7 @@ Jeder Schritt endet mit etwas, das sich ausprobieren oder prüfen lässt. Erledi
 
 ## Version 1
 
-- [ ] **1. Projektstruktur aufsetzen**
+- [x] **1. Projektstruktur aufsetzen**
   Ordner und leere Dateien, Node.js installieren, ein erster Test läuft.
   *Ergebnis: Grundgerüst im Repo.*
 
