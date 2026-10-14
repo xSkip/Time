@@ -40,6 +40,7 @@ Um 16:45: gearbeitet 6:10 h, Pausen 2:05 h (≥ 30 min, also kein Abzug), **noch
 
 - **Ein großer Knopf „Arbeit starten“**, solange ich nicht arbeite.
 - **Während der Arbeit zwei Knöpfe:** „Pause“ (Mittagessen, Sport, …) und „Unterwegs“ (Wegzeit). Damit ist jede Unterbrechung gleich richtig eingeordnet.
+- **„Feierabend“** beendet den laufenden Eintrag, ohne einen neuen zu starten. Wird er vergessen, endet der Eintrag automatisch um Mitternacht.
 - **Nachträglich korrigieren:** Einträge lassen sich bearbeiten, hinzufügen und löschen (z. B. vergessen zu drücken, oder Pause und Wegzeit verwechselt).
 - Ein neuer Tag beginnt automatisch um Mitternacht.
 

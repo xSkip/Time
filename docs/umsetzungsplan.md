@@ -12,7 +12,7 @@ Jeder Schritt endet mit etwas, das sich ausprobieren oder prüfen lässt. Erledi
   Arbeitszeit, Pausenregel (30 min nach 6 h, Wegzeit zählt nicht als Pause), noch offen / Plus, voraussichtliches Ende inklusive noch fälliger Pausendifferenz. Das Beispiel aus den Anforderungen wird ein Testfall, dazu Grenzfälle (genau 6 h, nur 15 min Pause, laufender Block, …).
   *Ergebnis: Rechnung nachweislich korrekt, noch ohne Bildschirm.*
 
-- [ ] **3. Speicherung**
+- [x] **3. Speicherung**
   Blöcke speichern und laden, neuer Tag ab Mitternacht, Umgang mit einem vom Vortag noch laufenden Block.
   *Ergebnis: Daten überleben ein Neuladen.*
 

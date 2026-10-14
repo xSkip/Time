@@ -10,6 +10,7 @@ iPhone (Safari / Home-Bildschirm)
 │  Anzeige (ui.js)            │  Knöpfe, Bildschirm, Bearbeiten
 ├─────────────────────────────┤
 │  Berechnung (rechner.js)    │  reine Logik, ohne Bildschirm und Speicher
+│  Blöcke (bloecke.js)        │  Knopfdruck, Bearbeiten, Tageswechsel
 ├─────────────────────────────┤
 │  Speicher (speicher.js)     │  localStorage
 └─────────────────────────────┘
@@ -33,15 +34,17 @@ GitHub Pages (statische Dateien aus xSkip/Time)
 ### Drei getrennte Schichten
 
 - **Berechnung (`rechner.js`):** bekommt eine Liste von Einträgen und eine Uhrzeit und liefert das Ergebnis (gearbeitet, Pausen, Abzug, noch offen/Plus, voraussichtliches Ende). Keine Abhängigkeit zu Bildschirm oder Speicher, daher vollständig automatisch testbar.
+- **Blöcke (`bloecke.js`):** Operationen auf der Liste der Einträge: Knopfdruck (laufenden Block beenden, neuen starten), Bearbeiten, Löschen, Tageswechsel. Ebenfalls rein und testbar.
 - **Speicher (`speicher.js`):** Einträge laden und speichern. Austauschbar (später z. B. IndexedDB), ohne die Berechnung anzufassen.
 - **Anzeige (`ui.js`):** Bildschirm aufbauen, Knöpfe, Bearbeiten, Aktualisierung jede Minute.
 
 ### Datenmodell: Zeitblöcke
 
 ```js
-{ id: "…", typ: "arbeit" | "pause" | "unterwegs", start: "2026-10-14T08:00", ende: "2026-10-14T12:00" }
+{ id: "…", typ: "arbeit" | "pause" | "unterwegs", start: 1791957600000, ende: 1791972000000 }
 ```
 
+- `start` und `ende` sind Zeitpunkte in Millisekunden (wie `System.currentTimeMillis()` in Java). Damit lässt sich direkt rechnen.
 - Der laufende Block hat noch kein `ende`.
 - Ein Knopfdruck beendet den laufenden Block und startet einen neuen.
 - Blöcke statt einzelner Knopfdrücke, weil sie sich leicht nachträglich bearbeiten lassen.
