@@ -23,3 +23,5 @@ Deine Zeiten werden nur auf deinem iPhone gespeichert.
 ## Dokumentation
 
 - [Anforderungen](docs/anforderungen.md)
+- [Architektur](docs/architektur.md)
+- [Umsetzungsplan](docs/umsetzungsplan.md)
