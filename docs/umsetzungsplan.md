@@ -36,7 +36,7 @@ Jeder Schritt endet mit etwas, das sich ausprobieren oder prüfen lässt. Erledi
   App installieren, ein, zwei Tage benutzen, Störendes ausbessern.
   *Ergebnis: Version 1 fertig.*
 
-- [ ] **9. Sicherung**
+- [x] **9. Sicherung**
   Export und Import der Daten als JSON-Datei.
   *Ergebnis: Schutz vor Datenverlust.*
 

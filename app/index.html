@@ -37,6 +37,16 @@
       <p class="leer" id="leer">Noch keine Einträge.</p>
       <button type="button" class="hinzufuegen" id="hinzufuegen">+ Eintrag nachtragen</button>
     </section>
+
+    <section class="sicherung">
+      <h2>Sicherung</h2>
+      <p>Deine Daten liegen nur auf diesem Gerät. Exportiere sie ab und zu in die Dateien-App.</p>
+      <div>
+        <button type="button" id="exportieren">Exportieren</button>
+        <button type="button" id="importieren">Importieren</button>
+      </div>
+      <input type="file" id="datei" accept="application/json,.json" hidden>
+    </section>
   </main>
 
   <dialog id="dialog">

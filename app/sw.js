@@ -2,7 +2,7 @@
 // Strategie "Netz zuerst": online kommt immer die neueste Version,
 // offline die zuletzt geladene aus dem Cache.
 
-const CACHE = 'time-v1';
+const CACHE = 'time-v2';
 const DATEIEN = [
   './',
   './index.html',
@@ -13,6 +13,7 @@ const DATEIEN = [
   './js/bloecke.js',
   './js/speicher.js',
   './js/format.js',
+  './js/sicherung.js',
   './icons/apple-touch-icon.png',
   './icons/icon-192.png',
 ];

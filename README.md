@@ -18,7 +18,8 @@ Deine Zeiten werden nur auf deinem iPhone gespeichert.
 - **Pause**, wenn du für Mittagessen, Sport o. ä. unterbrichst.
 - **Unterwegs**, wenn du z. B. vom Büro nach Hause fährst.
 - Am Startbildschirm siehst du, wie viel noch offen ist und wann du fertig bist.
-- Etwas vergessen? Einträge lassen sich nachträglich bearbeiten.
+- Etwas vergessen? Einträge antippen zum Bearbeiten, oder „+ Eintrag nachtragen“.
+- **Sicherung:** Ganz unten „Exportieren“ legt eine Datei in der Dateien-App ab. Mit „Importieren“ holst du sie zurück, z. B. auf ein neues iPhone.
 
 ## Dokumentation
 

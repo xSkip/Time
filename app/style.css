@@ -212,3 +212,11 @@ dialog h2 { margin: 0 0 16px; font-size: 20px; }
 .aktionen .speichern { background: var(--arbeit); color: var(--arbeit-text); }
 .aktionen .loeschen { grid-column: 1 / -1; order: 1; background: none; color: var(--gefahr); font-weight: 500; }
 .aktionen .loeschen[hidden] { display: none; }
+
+/* Sicherung */
+
+.sicherung { margin-top: 40px; }
+.sicherung h2 { font-size: 15px; color: var(--leise); font-weight: 600; margin: 0 0 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.sicherung p { color: var(--leise); font-size: 14px; margin: 0 0 12px; }
+.sicherung div { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sicherung button { font-weight: 500; padding: 14px 12px; }

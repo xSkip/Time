@@ -4,6 +4,7 @@ import {
 } from './bloecke.js';
 import { erstelleSpeicher } from './speicher.js';
 import { dauer, uhrzeit, zeitAmTag, NAMEN } from './format.js';
+import { exportiere, dateiname, liesSicherung, zusammenfuehren } from './sicherung.js';
 
 const speicher = erstelleSpeicher();
 let alle = speicher.lade();
@@ -195,6 +196,42 @@ $('loeschen').addEventListener('click', () => {
 formular.addEventListener('submit', (e) => {
   e.preventDefault();
   speichereFormular();
+});
+
+// Sicherung
+
+$('exportieren').addEventListener('click', async () => {
+  const jetzt = Date.now();
+  const datei = new File([exportiere(alle, jetzt)], dateiname(jetzt), { type: 'application/json' });
+  // iPhone: Teilen-Menü, dort "In Dateien sichern". Sonst normaler Download.
+  if (navigator.canShare?.({ files: [datei] })) {
+    try {
+      await navigator.share({ files: [datei] });
+    } catch {
+      // abgebrochen
+    }
+    return;
+  }
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(datei);
+  link.download = datei.name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+});
+
+$('importieren').addEventListener('click', () => $('datei').click());
+$('datei').addEventListener('change', async (e) => {
+  const datei = e.target.files[0];
+  e.target.value = '';
+  if (!datei) return;
+  try {
+    const importiert = liesSicherung(await datei.text());
+    if (confirm(`${importiert.length} Einträge importieren? Vorhandene Einträge bleiben erhalten.`)) {
+      speichere(zusammenfuehren(alle, importiert));
+    }
+  } catch (fehler) {
+    alert(fehler.message);
+  }
 });
 
 zeichne();
