@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#2f6f5e"/>
+  <!-- Ring: Hintergrund und erreichter Teil des Tagessolls -->
+  <circle cx="256" cy="256" r="150" fill="none" stroke="#ffffff" stroke-opacity="0.22" stroke-width="44"/>
+  <circle cx="256" cy="256" r="150" fill="none" stroke="#f4f1ea" stroke-width="44"
+          stroke-linecap="round" stroke-dasharray="660 943" transform="rotate(-90 256 256)"/>
+  <!-- Zeiger -->
+  <line x1="256" y1="256" x2="256" y2="168" stroke="#f4f1ea" stroke-width="28" stroke-linecap="round"/>
+  <line x1="256" y1="256" x2="318" y2="256" stroke="#f4f1ea" stroke-width="28" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="20" fill="#f4f1ea"/>
+</svg>

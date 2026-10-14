@@ -24,7 +24,7 @@ Jeder Schritt endet mit etwas, das sich ausprobieren oder prüfen lässt. Erledi
   Zeiten ändern, Typ ändern (Pause ↔ Unterwegs), Einträge hinzufügen und löschen.
   *Ergebnis: Fehler sind korrigierbar.*
 
-- [ ] **6. PWA**
+- [x] **6. PWA**
   Manifest, Icon, Service Worker für Offline-Betrieb.
   *Ergebnis: am Home-Bildschirm installierbar.*
 

@@ -202,3 +202,7 @@ setInterval(zeichne, 15000);
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) zeichne();
 });
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
