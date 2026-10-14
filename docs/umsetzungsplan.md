@@ -28,7 +28,7 @@ Jeder Schritt endet mit etwas, das sich ausprobieren oder prüfen lässt. Erledi
   Manifest, Icon, Service Worker für Offline-Betrieb.
   *Ergebnis: am Home-Bildschirm installierbar.*
 
-- [ ] **7. Automatische Veröffentlichung**
+- [x] **7. Automatische Veröffentlichung**
   GitHub Actions: Tests, danach Deployment auf GitHub Pages.
   *Ergebnis: App live unter `xskip.github.io/Time`.*
 
