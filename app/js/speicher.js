@@ -45,31 +45,34 @@ export function erstelleSpeicher(storage) {
     }
   };
 
+  // Legt die Rohdaten beiseite und speichert danach den bereinigten Stand,
+  // damit nicht bei jedem Start eine weitere Kopie entsteht. Ohne
+  // gelungene Kopie bleibt das Original unangetastet.
+  const legeBeiseite = (roh, bloecke) => {
+    if (schreibe(`${SCHLUESSEL}.defekt.${Date.now()}`, roh)) {
+      schreibe(SCHLUESSEL, JSON.stringify({ version: VERSION, bloecke }));
+    }
+    return bloecke;
+  };
+
   return {
     lade() {
       const fallbackWert = fallback.get(SCHLUESSEL);
       const roh = lese(SCHLUESSEL) ?? fallbackWert;
       if (!roh) return [];
 
+      let daten;
       try {
-        const daten = JSON.parse(roh);
-        const bloecke = Array.isArray(daten)
-          ? daten
-          : Array.isArray(daten?.bloecke) ? daten.bloecke : null;
-        if (!bloecke) {
-          schreibe(`${SCHLUESSEL}.defekt.${Date.now()}`, roh);
-          return [];
-        }
-        const gueltig = bereinigeBloecke(bloecke);
-        if (gueltig.length !== bloecke.length) {
-          schreibe(`${SCHLUESSEL}.defekt.${Date.now()}`, roh);
-        }
-        return gueltig;
+        daten = JSON.parse(roh);
       } catch {
-        // Unlesbare Daten nicht still überschreiben, sondern beiseitelegen.
-        schreibe(`${SCHLUESSEL}.defekt.${Date.now()}`, roh);
-        return [];
+        return legeBeiseite(roh, []);
       }
+      const bloecke = Array.isArray(daten)
+        ? daten
+        : Array.isArray(daten?.bloecke) ? daten.bloecke : null;
+      if (!bloecke) return legeBeiseite(roh, []);
+      const gueltig = bereinigeBloecke(bloecke);
+      return gueltig.length === bloecke.length ? gueltig : legeBeiseite(roh, gueltig);
     },
     speichere(bloecke) {
       const daten = JSON.stringify({ version: VERSION, bloecke });

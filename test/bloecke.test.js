@@ -168,3 +168,16 @@ test('pruefeListe erlaubt aneinandergrenzende Einträge und lehnt Einträge nach
   ];
   assert.match(pruefeListe(mitOffenemBlock), /nicht überschneiden/);
 });
+
+test('alte Überschneidungen an anderen Tagen blockieren das Bearbeiten nicht', () => {
+  const alle = [
+    // vorgestern: Ende verlängert, Pause nicht mitgewandert
+    { id: 'x1', typ: 'arbeit', start: um(12, 8, 0), ende: um(12, 12, 0) },
+    { id: 'x2', typ: 'pause', start: um(12, 11, 30), ende: um(12, 12, 30) },
+    { id: 'h1', typ: 'arbeit', start: um(14, 8, 0), ende: um(14, 12, 0) },
+    { id: 'h2', typ: 'pause', start: um(14, 12, 0) },
+  ];
+  const neu = aendere(alle, 'h1', { start: um(14, 7, 45) });
+  assert.equal(pruefeListe(neu, um(14, 7, 45)), null);
+  assert.match(pruefeListe(neu, um(12, 8, 0)), /nicht überschneiden/);
+});
