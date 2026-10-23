@@ -119,6 +119,12 @@ function zeichneListe(heute, jetzt) {
 }
 
 function zeichne() {
+  const warnung = $('speicher-warnung');
+  warnung.hidden = speicher.istDauerhaft();
+  warnung.textContent = warnung.hidden
+    ? ''
+    : 'Speichern auf diesem Gerät ist nicht verfügbar. Deine Änderungen gehen verloren, wenn du die App schließt. Bitte exportiere jetzt eine Sicherung.';
+
   const jetzt = Date.now();
   const geschlossen = schliesseAlte(alle, jetzt);
   if (geschlossen !== alle) {

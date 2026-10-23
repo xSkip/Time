@@ -3,24 +3,6 @@ import assert from 'node:assert/strict';
 
 import { erstelleSpeicher } from '../app/js/speicher.js';
 
-function speicherMitFehlern({ fehlerBeimLesen = false, fehlerBeimSchreiben = false, daten = null } = {}) {
-  const store = new Map();
-  return {
-    storage: {
-      getItem(key) {
-        if (fehlerBeimLesen) throw new Error('read failed');
-        return key in Object.fromEntries(store.entries()) ? store.get(key) ?? null : null;
-      },
-      setItem(key, value) {
-        if (fehlerBeimSchreiben) throw new Error('write failed');
-        store.set(key, String(value));
-      },
-    },
-    daten: () => daten,
-    store,
-  };
-}
-
 test('Fehlerhafte gespeicherte Daten werden bereinigt und nur gültige Blöcke übernommen', () => {
   const store = new Map();
   const speicher = erstelleSpeicher({
@@ -51,6 +33,7 @@ test('Wenn das Speichern fehlschlägt, bleibt ein Fallback im Speicher erhalten'
 
   speicher.speichere([{ id: 'x', typ: 'arbeit', start: 100, ende: 200 }]);
   assert.deepEqual(speicher.lade(), [{ id: 'x', typ: 'arbeit', start: 100, ende: 200 }]);
+  assert.equal(speicher.istDauerhaft(), false);
 });
 
 test('Beim Lesen fehlerhafter Storage-Implementierungen fällt die App nicht ab', () => {
@@ -62,4 +45,24 @@ test('Beim Lesen fehlerhafter Storage-Implementierungen fällt die App nicht ab'
   assert.deepEqual(speicher.lade(), []);
   speicher.speichere([{ id: 'y', typ: 'pause', start: 300 }]);
   assert.deepEqual(speicher.lade(), [{ id: 'y', typ: 'pause', start: 300 }]);
+  assert.equal(speicher.istDauerhaft(), false);
+});
+
+test('Unbekannte Datenformate werden gesichert statt als leerer Stand behandelt', () => {
+  const store = new Map([['time.bloecke', '{"andereDaten":true}']]);
+  const speicher = erstelleSpeicher({
+    getItem: (key) => store.get(key) ?? null,
+    setItem: (key, value) => store.set(key, value),
+  });
+
+  assert.deepEqual(speicher.lade(), []);
+  assert.ok([...store.keys()].some((key) => key.startsWith('time.bloecke.defekt.')));
+});
+
+test('Ohne Browser-Speicher funktioniert der temporäre Fallback statt eines Absturzes', () => {
+  const speicher = erstelleSpeicher();
+  assert.deepEqual(speicher.lade(), []);
+  speicher.speichere([{ id: 'z', typ: 'arbeit', start: 400 }]);
+  assert.deepEqual(speicher.lade(), [{ id: 'z', typ: 'arbeit', start: 400 }]);
+  assert.equal(speicher.istDauerhaft(), false);
 });

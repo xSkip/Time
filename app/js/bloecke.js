@@ -7,9 +7,15 @@ export function istGueltigerBlock(block) {
   return !!block
     && typeof block === 'object'
     && typeof block.id === 'string'
+    && block.id.length > 0
     && TYPEN.includes(block.typ)
-    && Number.isFinite(block.start)
-    && (block.ende == null || (Number.isFinite(block.ende) && block.ende >= block.start));
+    && Number.isSafeInteger(block.start)
+    && Math.abs(block.start) <= 8.64e15
+    && (block.ende == null || (
+      Number.isSafeInteger(block.ende)
+      && Math.abs(block.ende) <= 8.64e15
+      && block.ende >= block.start
+    ));
 }
 
 export function bereinigeBloecke(bloecke) {
