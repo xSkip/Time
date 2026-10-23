@@ -97,7 +97,7 @@ test('Gelingt die Kopie nicht, bleiben die Originaldaten unangetastet', () => {
   assert.equal(store.get('time.bloecke'), roh);
 });
 
-test('Scheitert nur das Speichern des bereinigten Stands, wird die Kopie wieder entfernt', () => {
+test('Scheitert das Speichern des bereinigten Stands, bleibt es bei einer einzigen Kopie', () => {
   const roh = JSON.stringify({ version: 1, bloecke: [
     { id: 'a', typ: 'arbeit', start: 1, ende: 2 },
     { id: 'b', typ: 'kekse', start: 3 },
@@ -109,12 +109,28 @@ test('Scheitert nur das Speichern des bereinigten Stands, wird die Kopie wieder 
       if (key === 'time.bloecke') throw new Error('quota');
       store.set(key, value);
     },
-    removeItem: (key) => store.delete(key),
+    removeItem() { throw new Error('remove failed'); },
   };
 
   for (let i = 0; i < 3; i++) {
     assert.deepEqual(erstelleSpeicher(storage).lade(), [{ id: 'a', typ: 'arbeit', start: 1, ende: 2 }]);
   }
-  assert.deepEqual([...store.keys()], ['time.bloecke']);
+  const kopien = [...store.keys()].filter((key) => key.startsWith('time.bloecke.defekt.'));
+  assert.equal(kopien.length, 1);
+  assert.equal(store.get(kopien[0]), roh);
   assert.equal(store.get('time.bloecke'), roh);
+});
+
+test('Unterschiedliche defekte Stände bekommen eigene Kopien', () => {
+  const store = new Map();
+  const storage = {
+    getItem: (key) => store.get(key) ?? null,
+    setItem: (key, value) => store.set(key, value),
+  };
+  store.set('time.bloecke', 'kaputt 1');
+  erstelleSpeicher(storage).lade();
+  store.set('time.bloecke', 'kaputt 2');
+  erstelleSpeicher(storage).lade();
+  const kopien = [...store.keys()].filter((key) => key.startsWith('time.bloecke.defekt.'));
+  assert.deepEqual(kopien.map((key) => store.get(key)).sort(), ['kaputt 1', 'kaputt 2']);
 });
