@@ -144,3 +144,27 @@ test('reicht die neue Zeit über den Nachbarn hinaus, meldet pruefeListe einen F
   alle = aendere(alle, 'p', { start: um(14, 7, 0) });
   assert.match(pruefeListe(alle), /hinaus/);
 });
+
+test('pruefeListe verhindert überlappende Einträge auch bei verschachtelten Zeiten', () => {
+  const alle = [
+    { id: 'a', typ: 'arbeit', start: um(14, 8, 0), ende: um(14, 12, 0) },
+    { id: 'b', typ: 'pause', start: um(14, 9, 0), ende: um(14, 10, 0) },
+    { id: 'c', typ: 'arbeit', start: um(14, 11, 0), ende: um(14, 13, 0) },
+  ];
+  assert.match(pruefeListe(alle), /nicht überschneiden/);
+});
+
+test('pruefeListe erlaubt aneinandergrenzende Einträge und lehnt Einträge nach offenen ab', () => {
+  const angrenzend = [
+    { id: 'a', typ: 'arbeit', start: um(14, 8, 0), ende: um(14, 12, 0) },
+    { id: 'b', typ: 'pause', start: um(14, 12, 0), ende: um(14, 12, 30) },
+    { id: 'c', typ: 'arbeit', start: um(14, 12, 30) },
+  ];
+  assert.equal(pruefeListe(angrenzend), null);
+
+  const mitOffenemBlock = [
+    { id: 'a', typ: 'arbeit', start: um(14, 8, 0) },
+    { id: 'b', typ: 'pause', start: um(14, 9, 0), ende: um(14, 9, 30) },
+  ];
+  assert.match(pruefeListe(mitOffenemBlock), /nicht überschneiden/);
+});

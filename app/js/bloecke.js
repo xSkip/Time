@@ -98,9 +98,25 @@ export function aendere(alle, id, felder) {
 // Prüft die ganze Liste nach einer Änderung, z. B. ob ein mitgezogener
 // Nachbar dadurch ein Ende vor seinem Beginn bekommen hat.
 export function pruefeListe(alle) {
-  return alle.some((b) => b.ende != null && b.ende < b.start)
-    ? 'Die neue Zeit reicht über den Eintrag davor oder danach hinaus.'
-    : null;
+  const liste = sortiert(alle);
+  if (liste.some((b) => b.ende != null && b.ende < b.start)) {
+    return 'Die neue Zeit reicht über den Eintrag davor oder danach hinaus.';
+  }
+
+  let hatVorherigen = false;
+  let letztesEnde = null;
+  for (const block of liste) {
+    if (hatVorherigen && (letztesEnde == null || block.start < letztesEnde)) {
+      return 'Einträge dürfen sich zeitlich nicht überschneiden.';
+    }
+    if (block.ende == null) {
+      letztesEnde = null;
+    } else if (!hatVorherigen || letztesEnde != null && block.ende > letztesEnde) {
+      letztesEnde = block.ende;
+    }
+    hatVorherigen = true;
+  }
+  return null;
 }
 
 export function loesche(alle, id) {
