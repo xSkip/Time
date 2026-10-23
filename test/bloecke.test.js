@@ -168,3 +168,31 @@ test('pruefeListe erlaubt aneinandergrenzende Einträge und lehnt Einträge nach
   ];
   assert.match(pruefeListe(mitOffenemBlock), /nicht überschneiden/);
 });
+
+test('alte Überschneidungen an anderen Tagen blockieren das Bearbeiten nicht', () => {
+  const alle = [
+    // vorgestern: Ende verlängert, Pause nicht mitgewandert
+    { id: 'x1', typ: 'arbeit', start: um(12, 8, 0), ende: um(12, 12, 0) },
+    { id: 'x2', typ: 'pause', start: um(12, 11, 30), ende: um(12, 12, 30) },
+    { id: 'h1', typ: 'arbeit', start: um(14, 8, 0), ende: um(14, 12, 0) },
+    { id: 'h2', typ: 'pause', start: um(14, 12, 0) },
+  ];
+  const neu = aendere(alle, 'h1', { start: um(14, 7, 45) });
+  assert.equal(pruefeListe(neu, um(14, 7, 45)), null);
+  assert.match(pruefeListe(neu, um(12, 8, 0)), /nicht überschneiden/);
+});
+
+test('ein über Mitternacht reichender Block zählt auch am Folgetag zur Überschneidungsprüfung', () => {
+  const alle = [
+    { id: 'n', typ: 'arbeit', start: um(13, 22, 0), ende: um(14, 2, 0) },
+    { id: 'h', typ: 'arbeit', start: um(14, 1, 0), ende: um(14, 3, 0) },
+  ];
+  assert.match(pruefeListe(alle, um(14, 1, 0)), /nicht überschneiden/);
+
+  // Ein vergessener Feierabend endet genau um Mitternacht und stört den Folgetag nicht.
+  const bisMitternacht = [
+    { id: 'v', typ: 'arbeit', start: um(13, 15, 0), ende: um(14, 0, 0) },
+    { id: 'h', typ: 'arbeit', start: um(14, 0, 0), ende: um(14, 3, 0) },
+  ];
+  assert.equal(pruefeListe(bisMitternacht, um(14, 0, 0)), null);
+});

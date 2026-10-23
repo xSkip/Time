@@ -2,7 +2,7 @@
 // Strategie "Netz zuerst": online kommt immer die neueste Version,
 // offline die zuletzt geladene aus dem Cache.
 
-const CACHE = 'time-v3';
+const CACHE = 'time-v4';
 const DATEIEN = [
   './',
   './index.html',

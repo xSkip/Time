@@ -95,26 +95,28 @@ export function aendere(alle, id, felder) {
   }));
 }
 
-// Prüft die ganze Liste nach einer Änderung, z. B. ob ein mitgezogener
-// Nachbar dadurch ein Ende vor seinem Beginn bekommen hat.
-export function pruefeListe(alle) {
-  const liste = sortiert(alle);
-  if (liste.some((b) => b.ende != null && b.ende < b.start)) {
+// Alle Blöcke, die den Tag zeitlich berühren, auch solche, die schon am
+// Vortag begonnen haben (nur über eine Sicherung möglich).
+function bloeckeAmTag(alle, tag) {
+  const von = tagesbeginn(tag);
+  const bis = naechsterTag(tag);
+  return sortiert(alle.filter((b) => b.start < bis && (b.start >= von || (b.ende ?? Infinity) > von)));
+}
+
+// Prüft die Liste nach einer Änderung, z. B. ob ein mitgezogener Nachbar
+// dadurch ein Ende vor seinem Beginn bekommen hat. Überschneidungen werden
+// nur am Tag tag geprüft: Alte Überschneidungen an anderen Tagen sieht man
+// in der App nicht und könnte sie daher auch nicht beheben.
+export function pruefeListe(alle, tag) {
+  if (alle.some((b) => b.ende != null && b.ende < b.start)) {
     return 'Die neue Zeit reicht über den Eintrag davor oder danach hinaus.';
   }
 
-  let hatVorherigen = false;
-  let letztesEnde = null;
-  for (const block of liste) {
-    if (hatVorherigen && (letztesEnde == null || block.start < letztesEnde)) {
-      return 'Einträge dürfen sich zeitlich nicht überschneiden.';
-    }
-    if (block.ende == null) {
-      letztesEnde = null;
-    } else if (!hatVorherigen || letztesEnde != null && block.ende > letztesEnde) {
-      letztesEnde = block.ende;
-    }
-    hatVorherigen = true;
+  const liste = tag == null ? sortiert(alle) : bloeckeAmTag(alle, tag);
+  let bisher = -Infinity; // spätestes Ende davor; null = ein Eintrag läuft noch
+  for (const b of liste) {
+    if (bisher == null || b.start < bisher) return 'Einträge dürfen sich zeitlich nicht überschneiden.';
+    bisher = b.ende == null ? null : Math.max(bisher, b.ende);
   }
   return null;
 }
