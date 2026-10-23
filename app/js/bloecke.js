@@ -3,6 +3,19 @@
 
 export const TYPEN = ['arbeit', 'pause', 'unterwegs'];
 
+export function istGueltigerBlock(block) {
+  return !!block
+    && typeof block === 'object'
+    && typeof block.id === 'string'
+    && TYPEN.includes(block.typ)
+    && Number.isFinite(block.start)
+    && (block.ende == null || (Number.isFinite(block.ende) && block.ende >= block.start));
+}
+
+export function bereinigeBloecke(bloecke) {
+  return Array.isArray(bloecke) ? bloecke.filter(istGueltigerBlock) : [];
+}
+
 export function tagesbeginn(ms) {
   const d = new Date(ms);
   return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
