@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  wechsle, laufender, bloeckeVonTag, schliesseAlte, aendere, loesche, fuegeHinzu, pruefe,
+  wechsle, laufender, bloeckeVonTag, schliesseAlte, aendere, loesche, fuegeHinzu, pruefe, pruefeListe,
 } from '../app/js/bloecke.js';
 import { erstelleSpeicher } from '../app/js/speicher.js';
 
@@ -101,4 +101,46 @@ test('Speicher: unlesbare Daten werden gesichert statt überschrieben', () => {
   assert.deepEqual(erstelleSpeicher(storage).lade(), []);
   const sicherung = [...storage.daten.keys()].find((k) => k.startsWith('time.bloecke.defekt.'));
   assert.equal(storage.getItem(sicherung), '{kaputt');
+});
+
+test('Platzhalter nachträglich korrigieren: Nachbarn wandern mit', () => {
+  // Arbeit, Pause, Arbeit um 11:30 schnell hintereinander als Platzhalter angelegt
+  let alle = wechsle([], 'arbeit', um(14, 11, 30), () => 'a1');
+  alle = wechsle(alle, 'pause', um(14, 11, 30), () => 'p');
+  alle = wechsle(alle, 'arbeit', um(14, 11, 30), () => 'a2');
+
+  // Beginn der ersten Arbeit korrigieren: ihr Ende bleibt
+  alle = aendere(alle, 'a1', { start: um(14, 8, 30) });
+  const a1 = alle.find((b) => b.id === 'a1');
+  assert.equal(a1.start, um(14, 8, 30));
+  assert.equal(a1.ende, um(14, 11, 30));
+
+  // Pause korrigieren: Ende davor und Beginn danach wandern mit
+  alle = aendere(alle, 'p', { start: um(14, 12, 0), ende: um(14, 12, 30) });
+  assert.deepEqual(alle.map((b) => [b.id, b.start, b.ende]), [
+    ['a1', um(14, 8, 30), um(14, 12, 0)],
+    ['p', um(14, 12, 0), um(14, 12, 30)],
+    ['a2', um(14, 12, 30), undefined],
+  ]);
+  assert.equal(pruefeListe(alle), null);
+});
+
+test('nicht angrenzende Nachbarn bleiben unverändert', () => {
+  let alle = [
+    { id: 'a', typ: 'arbeit', start: um(14, 8, 0), ende: um(14, 12, 0) },
+    { id: 'p', typ: 'pause', start: um(14, 12, 15), ende: um(14, 12, 45) },
+    { id: 'b', typ: 'arbeit', start: um(14, 13, 0), ende: um(14, 16, 0) },
+  ];
+  alle = aendere(alle, 'p', { start: um(14, 12, 5), ende: um(14, 12, 50) });
+  assert.equal(alle[0].ende, um(14, 12, 0));
+  assert.equal(alle[2].start, um(14, 13, 0));
+});
+
+test('reicht die neue Zeit über den Nachbarn hinaus, meldet pruefeListe einen Fehler', () => {
+  let alle = [
+    { id: 'a', typ: 'arbeit', start: um(14, 8, 0), ende: um(14, 12, 0) },
+    { id: 'p', typ: 'pause', start: um(14, 12, 0), ende: um(14, 12, 30) },
+  ];
+  alle = aendere(alle, 'p', { start: um(14, 7, 0) });
+  assert.match(pruefeListe(alle), /hinaus/);
 });

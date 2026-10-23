@@ -1,6 +1,6 @@
 import { berechne } from './rechner.js';
 import {
-  wechsle, laufender, bloeckeVonTag, schliesseAlte, aendere, loesche, fuegeHinzu, pruefe, tagesbeginn,
+  wechsle, laufender, bloeckeVonTag, schliesseAlte, aendere, loesche, fuegeHinzu, pruefe, pruefeListe, tagesbeginn,
 } from './bloecke.js';
 import { erstelleSpeicher } from './speicher.js';
 import { dauer, uhrzeit, zeitAmTag, NAMEN } from './format.js';
@@ -172,12 +172,14 @@ function speichereFormular() {
     const aktiv = laufender(alle);
     if (aktiv && aktiv.id !== bearbeitet?.id) fehler = 'Es läuft bereits ein anderer Eintrag. Bitte ein Ende angeben.';
   }
+  const neu = fehler ? null : bearbeitet ? aendere(alle, bearbeitet.id, block) : fuegeHinzu(alle, block);
+  if (!fehler) fehler = pruefeListe(neu);
   if (fehler) {
     $('fehler').textContent = fehler;
     return;
   }
 
-  speichere(bearbeitet ? aendere(alle, bearbeitet.id, block) : fuegeHinzu(alle, block));
+  speichere(neu);
   dialog.close();
 }
 

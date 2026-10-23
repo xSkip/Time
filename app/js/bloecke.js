@@ -56,8 +56,32 @@ export function fuegeHinzu(alle, block, neueId = () => crypto.randomUUID()) {
   return sortiert([...alle, { ...block, id: neueId() }]);
 }
 
+// Ändert einen Block. Grenzt der Block davor oder danach direkt an, wandert
+// dessen Ende bzw. Beginn mit, damit keine Lücke entsteht.
 export function aendere(alle, id, felder) {
-  return sortiert(alle.map((b) => (b.id === id ? { ...b, ...felder } : b)));
+  const liste = sortiert(alle);
+  const i = liste.findIndex((b) => b.id === id);
+  if (i < 0) return liste;
+  const alt = liste[i];
+  const neu = { ...alt, ...felder };
+  const davor = liste[i - 1];
+  const danach = liste[i + 1];
+  return sortiert(liste.map((b) => {
+    if (b === alt) return neu;
+    if (b === davor && b.ende === alt.start && neu.start !== alt.start) return { ...b, ende: neu.start };
+    if (b === danach && alt.ende != null && b.start === alt.ende && neu.ende != null && neu.ende !== alt.ende) {
+      return { ...b, start: neu.ende };
+    }
+    return b;
+  }));
+}
+
+// Prüft die ganze Liste nach einer Änderung, z. B. ob ein mitgezogener
+// Nachbar dadurch ein Ende vor seinem Beginn bekommen hat.
+export function pruefeListe(alle) {
+  return alle.some((b) => b.ende != null && b.ende < b.start)
+    ? 'Die neue Zeit reicht über den Eintrag davor oder danach hinaus.'
+    : null;
 }
 
 export function loesche(alle, id) {
