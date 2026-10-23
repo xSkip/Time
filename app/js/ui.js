@@ -119,6 +119,12 @@ function zeichneListe(heute, jetzt) {
 }
 
 function zeichne() {
+  const warnung = $('speicher-warnung');
+  warnung.hidden = speicher.istDauerhaft();
+  warnung.textContent = warnung.hidden
+    ? ''
+    : 'Speichern auf diesem Gerät ist nicht verfügbar. Deine Änderungen gehen verloren, wenn du die App schließt. Bitte exportiere jetzt eine Sicherung.';
+
   const jetzt = Date.now();
   const geschlossen = schliesseAlte(alle, jetzt);
   if (geschlossen !== alle) {
@@ -173,7 +179,7 @@ function speichereFormular() {
     if (aktiv && aktiv.id !== bearbeitet?.id) fehler = 'Es läuft bereits ein anderer Eintrag. Bitte ein Ende angeben.';
   }
   const neu = fehler ? null : bearbeitet ? aendere(alle, bearbeitet.id, block) : fuegeHinzu(alle, block);
-  if (!fehler) fehler = pruefeListe(neu);
+  if (!fehler) fehler = pruefeListe(neu, block.start);
   if (fehler) {
     $('fehler').textContent = fehler;
     return;

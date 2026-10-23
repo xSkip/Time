@@ -1,6 +1,6 @@
 // Sicherung: alle Blöcke als JSON-Datei exportieren und wieder einlesen.
 
-import { TYPEN } from './bloecke.js';
+import { istGueltigerBlock } from './bloecke.js';
 
 const APP = 'time';
 const VERSION = 1;
@@ -27,15 +27,18 @@ export function liesSicherung(text) {
   if (daten?.app !== APP || !Array.isArray(daten.bloecke)) {
     throw new Error('Die Datei ist keine Time-Sicherung.');
   }
+  if (!Number.isInteger(daten.version) || daten.version < 1) {
+    throw new Error('Die Sicherung hat keine gültige Versionsnummer.');
+  }
   if (daten.version > VERSION) {
     throw new Error('Die Sicherung stammt aus einer neueren Version der App.');
   }
+  const ids = new Set();
   for (const b of daten.bloecke) {
-    const gueltig = typeof b.id === 'string'
-      && TYPEN.includes(b.typ)
-      && Number.isFinite(b.start)
-      && (b.ende == null || Number.isFinite(b.ende));
-    if (!gueltig) throw new Error('Die Sicherung enthält ungültige Einträge.');
+    if (!istGueltigerBlock(b) || ids.has(b.id)) {
+      throw new Error('Die Sicherung enthält ungültige oder doppelte Einträge.');
+    }
+    ids.add(b.id);
   }
   return daten.bloecke;
 }

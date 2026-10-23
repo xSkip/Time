@@ -3,6 +3,25 @@
 
 export const TYPEN = ['arbeit', 'pause', 'unterwegs'];
 
+export function istGueltigerBlock(block) {
+  return !!block
+    && typeof block === 'object'
+    && typeof block.id === 'string'
+    && block.id.length > 0
+    && TYPEN.includes(block.typ)
+    && Number.isSafeInteger(block.start)
+    && Math.abs(block.start) <= 8.64e15
+    && (block.ende == null || (
+      Number.isSafeInteger(block.ende)
+      && Math.abs(block.ende) <= 8.64e15
+      && block.ende >= block.start
+    ));
+}
+
+export function bereinigeBloecke(bloecke) {
+  return Array.isArray(bloecke) ? bloecke.filter(istGueltigerBlock) : [];
+}
+
 export function tagesbeginn(ms) {
   const d = new Date(ms);
   return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
@@ -76,12 +95,30 @@ export function aendere(alle, id, felder) {
   }));
 }
 
-// Prüft die ganze Liste nach einer Änderung, z. B. ob ein mitgezogener
-// Nachbar dadurch ein Ende vor seinem Beginn bekommen hat.
-export function pruefeListe(alle) {
-  return alle.some((b) => b.ende != null && b.ende < b.start)
-    ? 'Die neue Zeit reicht über den Eintrag davor oder danach hinaus.'
-    : null;
+// Alle Blöcke, die den Tag zeitlich berühren, auch solche, die schon am
+// Vortag begonnen haben (nur über eine Sicherung möglich).
+function bloeckeAmTag(alle, tag) {
+  const von = tagesbeginn(tag);
+  const bis = naechsterTag(tag);
+  return sortiert(alle.filter((b) => b.start < bis && (b.start >= von || (b.ende ?? Infinity) > von)));
+}
+
+// Prüft die Liste nach einer Änderung, z. B. ob ein mitgezogener Nachbar
+// dadurch ein Ende vor seinem Beginn bekommen hat. Überschneidungen werden
+// nur am Tag tag geprüft: Alte Überschneidungen an anderen Tagen sieht man
+// in der App nicht und könnte sie daher auch nicht beheben.
+export function pruefeListe(alle, tag) {
+  if (alle.some((b) => b.ende != null && b.ende < b.start)) {
+    return 'Die neue Zeit reicht über den Eintrag davor oder danach hinaus.';
+  }
+
+  const liste = tag == null ? sortiert(alle) : bloeckeAmTag(alle, tag);
+  let bisher = -Infinity; // spätestes Ende davor; null = ein Eintrag läuft noch
+  for (const b of liste) {
+    if (bisher == null || b.start < bisher) return 'Einträge dürfen sich zeitlich nicht überschneiden.';
+    bisher = b.ende == null ? null : Math.max(bisher, b.ende);
+  }
+  return null;
 }
 
 export function loesche(alle, id) {

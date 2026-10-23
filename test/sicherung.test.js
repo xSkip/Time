@@ -22,8 +22,17 @@ test('fremde oder kaputte Dateien werden abgelehnt', () => {
   assert.throws(() => liesSicherung('{"app":"time","version":99,"bloecke":[]}'), /neueren Version/);
   assert.throws(
     () => liesSicherung('{"app":"time","version":1,"bloecke":[{"id":"x","typ":"kaffee","start":1}]}'),
-    /ungültige Einträge/,
+    /ungültige oder doppelte Einträge/,
   );
+  assert.throws(
+    () => liesSicherung('{"app":"time","version":1,"bloecke":[{"id":"x","typ":"arbeit","start":2,"ende":1}]}'),
+    /ungültige oder doppelte Einträge/,
+  );
+  assert.throws(
+    () => liesSicherung('{"app":"time","version":1,"bloecke":[{"id":"x","typ":"arbeit","start":1},{"id":"x","typ":"pause","start":2}]}'),
+    /ungültige oder doppelte Einträge/,
+  );
+  assert.throws(() => liesSicherung('{"app":"time","bloecke":[]}'), /Versionsnummer/);
 });
 
 test('Zusammenführen behält Vorhandenes und übernimmt Importiertes', () => {
