@@ -96,3 +96,25 @@ test('Gelingt die Kopie nicht, bleiben die Originaldaten unangetastet', () => {
   assert.deepEqual(speicher.lade(), []);
   assert.equal(store.get('time.bloecke'), roh);
 });
+
+test('Scheitert nur das Speichern des bereinigten Stands, wird die Kopie wieder entfernt', () => {
+  const roh = JSON.stringify({ version: 1, bloecke: [
+    { id: 'a', typ: 'arbeit', start: 1, ende: 2 },
+    { id: 'b', typ: 'kekse', start: 3 },
+  ] });
+  const store = new Map([['time.bloecke', roh]]);
+  const storage = {
+    getItem: (key) => store.get(key) ?? null,
+    setItem(key, value) {
+      if (key === 'time.bloecke') throw new Error('quota');
+      store.set(key, value);
+    },
+    removeItem: (key) => store.delete(key),
+  };
+
+  for (let i = 0; i < 3; i++) {
+    assert.deepEqual(erstelleSpeicher(storage).lade(), [{ id: 'a', typ: 'arbeit', start: 1, ende: 2 }]);
+  }
+  assert.deepEqual([...store.keys()], ['time.bloecke']);
+  assert.equal(store.get('time.bloecke'), roh);
+});

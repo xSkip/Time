@@ -47,10 +47,17 @@ export function erstelleSpeicher(storage) {
 
   // Legt die Rohdaten beiseite und speichert danach den bereinigten Stand,
   // damit nicht bei jedem Start eine weitere Kopie entsteht. Ohne
-  // gelungene Kopie bleibt das Original unangetastet.
+  // gelungene Kopie bleibt das Original unangetastet. Scheitert das
+  // Speichern des bereinigten Stands, wird die Kopie wieder entfernt: Das
+  // Original ist dann ja noch vollständig da.
   const legeBeiseite = (roh, bloecke) => {
-    if (schreibe(`${SCHLUESSEL}.defekt.${Date.now()}`, roh)) {
-      schreibe(SCHLUESSEL, JSON.stringify({ version: VERSION, bloecke }));
+    const kopie = `${SCHLUESSEL}.defekt.${Date.now()}`;
+    if (schreibe(kopie, roh) && !schreibe(SCHLUESSEL, JSON.stringify({ version: VERSION, bloecke }))) {
+      try {
+        storage.removeItem(kopie);
+      } catch {
+        // Dann bleibt eben eine Kopie zu viel liegen.
+      }
     }
     return bloecke;
   };

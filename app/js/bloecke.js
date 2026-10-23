@@ -95,6 +95,14 @@ export function aendere(alle, id, felder) {
   }));
 }
 
+// Alle Blöcke, die den Tag zeitlich berühren, auch solche, die schon am
+// Vortag begonnen haben (nur über eine Sicherung möglich).
+function bloeckeAmTag(alle, tag) {
+  const von = tagesbeginn(tag);
+  const bis = naechsterTag(tag);
+  return sortiert(alle.filter((b) => b.start < bis && (b.start >= von || (b.ende ?? Infinity) > von)));
+}
+
 // Prüft die Liste nach einer Änderung, z. B. ob ein mitgezogener Nachbar
 // dadurch ein Ende vor seinem Beginn bekommen hat. Überschneidungen werden
 // nur am Tag tag geprüft: Alte Überschneidungen an anderen Tagen sieht man
@@ -104,7 +112,7 @@ export function pruefeListe(alle, tag) {
     return 'Die neue Zeit reicht über den Eintrag davor oder danach hinaus.';
   }
 
-  const liste = tag == null ? sortiert(alle) : bloeckeVonTag(alle, tag);
+  const liste = tag == null ? sortiert(alle) : bloeckeAmTag(alle, tag);
   let bisher = -Infinity; // spätestes Ende davor; null = ein Eintrag läuft noch
   for (const b of liste) {
     if (bisher == null || b.start < bisher) return 'Einträge dürfen sich zeitlich nicht überschneiden.';
